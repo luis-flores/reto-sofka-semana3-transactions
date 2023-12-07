@@ -10,22 +10,15 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
-public class RouterConfig {
+public class CuentaRouter {
     @Autowired
     private CuentaHandler cuenta;
-    @Autowired
-    private TransaccionHandler transaccion;
     @Bean
-    public RouterFunction<ServerResponse> cuentaListar() {
+    public RouterFunction<ServerResponse> cuentaRoutes() {
         return RouterFunctions.route()
             .GET("/Cuentas/listar_cuentas", cuenta::findAll)
             .POST("/Cuentas/Crear", cuenta::crear)
 
-            .GET("/Transacciones/listar_transacciones", transaccion::findAll)
-            .POST("/Transacciones/Crear/Deposito/Cajero/{id_Cuenta}/{monto}", transaccion::procesarDepositoCajero)
-            .POST("/Transacciones/Crear/Deposito/Sucursal/{id_Cuenta}/{monto}", transaccion::procesarDepositoSucursal)
-            .POST("/Transacciones/Crear/Deposito/OtraCuenta/{id_Cuenta}/{monto}", transaccion::procesarDepositoCuenta)
-            
             .build();
     }
 }
