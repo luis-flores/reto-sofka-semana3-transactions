@@ -35,7 +35,6 @@ public class Cuenta_ImpMongo implements I_Cuenta
                         p_Cuenta_DTO.getCliente().getNombre()),
                 p_Cuenta_DTO.getSaldo_Global());
 
-
         eventBus.publishMessage(cuenta);
 
         return repositorio_Cuenta.save(cuenta)
