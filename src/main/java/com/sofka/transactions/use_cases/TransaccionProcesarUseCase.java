@@ -41,11 +41,11 @@ public class TransaccionProcesarUseCase implements ITransaccionProceso {
                     tipo.toString()
                 );
                 return repositorioCuenta.save(cuenta)
-                    .flatMap(cuentaCreada ->
-                        Mono.error(new ErrorGuardado(
-                            "Error de prueba",
-                            transaccion
-                        )))
+//                    .flatMap(cuentaCreada ->
+//                        Mono.error(new ErrorGuardado(
+//                            "Error de prueba",
+//                            transaccion
+//                        )))
                     .flatMap(c -> {
                         System.out.println("Transaccion guardada: " + transaccion.getId());
                         return repositorioTransaccion.save(transaccion);

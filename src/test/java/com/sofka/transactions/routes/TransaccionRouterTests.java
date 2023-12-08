@@ -1,4 +1,4 @@
-package com.sofka.transactions;
+package com.sofka.transactions.routes;
 
 import com.sofka.transactions.handlers.TransaccionHandler;
 import com.sofka.transactions.models.DTO.M_Transaccion_DTO;
