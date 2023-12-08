@@ -1,0 +1,1 @@
+EPA.Compra.Fisica=0.00;EPA.Compra.Web=5.00;EPA.Deposito.Cajero=2.00;EPA.Deposito.OtraCuenta=1.50;EPA.Deposito.Sucursal=0.00;mongo.uri=mongodb://localhost:27017/transactions_reactive;rabbit.uri=amqps://ptwysuun:7MkBMx5cdPBCwVS7jIWfwvPfiMBQ-SB-@gull.rmq.cloudamqp.com:5671/ptwysuun;server.port=8086

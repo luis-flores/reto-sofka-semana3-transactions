@@ -29,12 +29,9 @@ public class RabbitConfig {
     public static final String EXCHANGE_NAME = "transactions-exchange";
     public static final String ROUTING_KEY_NAME = "transactions.routing.key";
     public static final String ROUTING_KEY_ERROR = "error.routing.key";
-    @Value("${rabbit.uri}")
-    public static String URI_NAME;
 
     @Bean
     public static URI uri(@Value("${rabbit.uri}") String uri) {
-        URI_NAME = uri;
         return URI.create(uri);
     }
     @Bean
@@ -56,7 +53,6 @@ public class RabbitConfig {
 
         return amqpAdmin;
     }
-
 
     @Bean
     public ConnectionFactory connectionFactory(URI uri) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {

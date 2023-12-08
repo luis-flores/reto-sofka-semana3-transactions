@@ -1,7 +1,7 @@
 package com.sofka.transactions.routes;
 
 import com.sofka.transactions.handlers.TransaccionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -9,9 +9,10 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
+@AllArgsConstructor
 public class TransaccionRouter {
-    @Autowired
     private TransaccionHandler transaccion;
+
     @Bean
     public RouterFunction<ServerResponse> transaccionRoutes() {
         return RouterFunctions.route()
