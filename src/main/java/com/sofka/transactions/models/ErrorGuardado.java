@@ -1,4 +1,4 @@
-package com.sofka.transactions.services;
+package com.sofka.transactions.models;
 
 
 import com.sofka.transactions.models.Mongo.M_TransaccionMongo;

@@ -1,6 +1,5 @@
 package com.sofka.transactions.routes;
 
-import com.sofka.transactions.handlers.CuentaHandler;
 import com.sofka.transactions.handlers.TransaccionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
