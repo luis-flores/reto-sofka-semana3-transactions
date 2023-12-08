@@ -23,9 +23,9 @@ public class CuentaHandler {
     public Mono<ServerResponse> crear(ServerRequest request) {
         return request.bodyToMono(M_Cuenta_DTO.class)
             .flatMap(cuenta -> {
-                cuentaService.crear_Cuenta(cuenta);
+                Mono<M_Cuenta_DTO> cuentaCreada = cuentaService.crear_Cuenta(cuenta);
                 return ServerResponse.ok()
-                    .body(cuenta, M_Cuenta_DTO.class);
+                    .body(cuentaCreada, M_Cuenta_DTO.class);
             });
     }
 }

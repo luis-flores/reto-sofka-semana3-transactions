@@ -20,8 +20,7 @@ public class M_CuentaMongo
         this.cliente = cliente;
     }
 
-    public M_CuentaMongo()
-    {
+    public M_CuentaMongo() {
     }
 
     public String getId() {

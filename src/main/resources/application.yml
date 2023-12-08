@@ -9,6 +9,8 @@ EPA:
   Compra:
     Fisica: ${EPA.Compra.Fisica}
     Web: ${EPA.Compra.Web}
+  Retiro:
+    Cajero: 1
 
   Motor_BD: MONGO
 

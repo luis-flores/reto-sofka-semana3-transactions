@@ -6,6 +6,7 @@ import com.sofka.transactions.models.DTO.M_Cliente_DTO;
 import com.sofka.transactions.models.DTO.M_Cuenta_DTO;
 import com.sofka.transactions.models.Mongo.M_ClienteMongo;
 import com.sofka.transactions.models.Mongo.M_CuentaMongo;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -27,23 +28,18 @@ public class Cuenta_ImpMongo implements I_Cuenta
     @Autowired
     private Sender sender;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public Mono<M_Cuenta_DTO> crear_Cuenta(M_Cuenta_DTO p_Cuenta_DTO)
     {
-        M_CuentaMongo cuenta = new M_CuentaMongo(p_Cuenta_DTO.getId(),
-                new M_ClienteMongo(p_Cuenta_DTO.getCliente().getId(),
-                        p_Cuenta_DTO.getCliente().getNombre()),
-                p_Cuenta_DTO.getSaldo_Global());
+        M_CuentaMongo cuenta = modelMapper.map(p_Cuenta_DTO, M_CuentaMongo.class);
 
         eventBus.publishMessage(cuenta);
 
         return repositorio_Cuenta.save(cuenta)
-                .map(cuentaModel-> {
-                    return new M_Cuenta_DTO(cuentaModel.getId(),
-                            new M_Cliente_DTO(cuentaModel.getCliente().getId(),
-                                    cuentaModel.getCliente().getNombre()),
-                            cuentaModel.getSaldo_Global());
-                });
+            .map(cuentaModel-> modelMapper.map(cuentaModel, M_Cuenta_DTO.class));
     }
 
     @Override

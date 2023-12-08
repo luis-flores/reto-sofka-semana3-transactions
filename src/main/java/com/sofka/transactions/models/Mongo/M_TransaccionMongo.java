@@ -16,10 +16,7 @@ public class M_TransaccionMongo
     private BigDecimal costo_transaccion;
     private String tipo;
 
-    //-------------------------------------------------------------------------------------------------------------------------
     private M_CuentaMongo cuenta;
-
-    //-------------------------------------------------------------------------------------------------------------------------
 
     public M_TransaccionMongo(M_CuentaMongo cuenta, BigDecimal monto_transaccion, BigDecimal saldo_inicial, BigDecimal saldo_final, BigDecimal costo_tansaccion, String tipo) {
         //this.id = id;
@@ -31,9 +28,7 @@ public class M_TransaccionMongo
         this.tipo = tipo;
     }
 
-    public M_TransaccionMongo()
-    {
-
+    public M_TransaccionMongo() {
     }
 
     public void setId(String id) {
