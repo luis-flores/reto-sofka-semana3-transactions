@@ -17,16 +17,22 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class CuentaCrearUseCase implements Function<M_Cuenta_DTO, Mono<M_Cuenta_DTO>> {
     private I_RepositorioCuentaMongo repositorioCuenta;
-    private ModelMapper modelMapper;
     private RabbitMqPublisher eventBus;
+    private ModelMapper modelMapper;
 
     @Override
     public Mono<M_Cuenta_DTO> apply(M_Cuenta_DTO pCuentaDTO) {
+        eventBus.publishLog("CuentaCrearUseCase: Inicio de ejecución");
+
         M_CuentaMongo cuenta = modelMapper.map(pCuentaDTO, M_CuentaMongo.class);
+        eventBus.publishLog("CuentaCrearUseCase: Mapeo de cuenta: " + cuenta);
 
         eventBus.publishMessage(cuenta);
 
         return repositorioCuenta.save(cuenta)
-            .map(cuentaModel-> modelMapper.map(cuentaModel, M_Cuenta_DTO.class));
+            .doOnSuccess(cuentaGuardada -> eventBus.publishLog("CuentaCrearUseCase Cuenta guardada: ", cuentaGuardada))
+            .map(cuentaModel-> modelMapper.map(cuentaModel, M_Cuenta_DTO.class))
+            .doOnSuccess(cuentaMap -> eventBus.publishLog("CuentaCrearUseCase: Fin de ejecución"))
+            .doOnError(error -> eventBus.publishLog("Cuenta"));
     }
 }

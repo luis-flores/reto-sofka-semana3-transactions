@@ -25,9 +25,11 @@ public class RabbitConfig {
 
     public static final String QUEUE_NAME = "transactions-queue";
     public static final String QUEUE_NAME_2 = "transactions-queue-2";
+    public static final String LOG_QUEUE_NAME = "log-queue";
     public static final String ERROR_QUEUE_NAME = "error-queue";
     public static final String EXCHANGE_NAME = "transactions-exchange";
     public static final String ROUTING_KEY_NAME = "transactions.routing.key";
+    public static final String ROUTING_KEY_LOG = "log.routing.key";
     public static final String ROUTING_KEY_ERROR = "error.routing.key";
 
     @Bean
@@ -42,13 +44,16 @@ public class RabbitConfig {
         var exchange = new TopicExchange(EXCHANGE_NAME);
         var queue = new Queue(QUEUE_NAME, true, false, false);
         var queue2 = new Queue(QUEUE_NAME_2, true, false, false);
+        var logQueue = new Queue(LOG_QUEUE_NAME, true, false, false);
         var errorQueue = new Queue(ERROR_QUEUE_NAME, true, false, false);
         amqpAdmin.declareExchange(exchange);
         amqpAdmin.declareQueue(queue);
         amqpAdmin.declareQueue(queue2);
+        amqpAdmin.declareQueue(logQueue);
         amqpAdmin.declareQueue(errorQueue);
         amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY_NAME));
         amqpAdmin.declareBinding(BindingBuilder.bind(queue2).to(exchange).with(ROUTING_KEY_NAME));
+        amqpAdmin.declareBinding(BindingBuilder.bind(logQueue).to(exchange).with(ROUTING_KEY_LOG));
         amqpAdmin.declareBinding(BindingBuilder.bind(errorQueue).to(exchange).with(ROUTING_KEY_ERROR));
 
         return amqpAdmin;

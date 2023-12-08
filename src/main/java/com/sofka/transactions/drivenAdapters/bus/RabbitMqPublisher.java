@@ -18,14 +18,28 @@ public class RabbitMqPublisher {
     private Gson gson;
 
     public void publishMessage(Object object){
-        sender
-                .send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
-                        RabbitConfig.ROUTING_KEY_NAME, gson.toJson(object).getBytes()))).subscribe();
+        sender.send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
+            RabbitConfig.ROUTING_KEY_NAME, gson.toJson(object).getBytes()))).subscribe();
+    }
+
+    public void publishLog(String message) {
+        publishLog(message, null);
+    }
+
+    public void publishLog(String message, Object object){
+        String logMessage = "";
+
+        if (!message.isEmpty())
+            logMessage += message;
+        if (object != null)
+            logMessage += gson.toJson(object);
+
+        sender.send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
+            RabbitConfig.ROUTING_KEY_LOG, logMessage.getBytes()))).subscribe();
     }
 
     public void publishError(Object object) {
-        sender
-              .send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
-                        RabbitConfig.ROUTING_KEY_ERROR, gson.toJson(object).getBytes()))).subscribe();
+        sender.send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
+            RabbitConfig.ROUTING_KEY_ERROR, gson.toJson(object).getBytes()))).subscribe();
     }
 }

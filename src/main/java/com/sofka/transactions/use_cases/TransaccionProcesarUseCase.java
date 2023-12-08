@@ -26,11 +26,22 @@ public class TransaccionProcesarUseCase implements ITransaccionProceso {
 
     @Override
     public Mono<M_Transaccion_DTO> apply(String idCuenta, ITipoTransaccion tipo, BigDecimal monto) {
+        eventBus.publishLog("TransaccionProcesarUseCase: Inicio de ejecución");
+        eventBus.publishLog("TransaccionProcesarUseCase: Id cuenta: " + idCuenta);
+        eventBus.publishLog("TransaccionProcesarUseCase: Tipo: ", tipo.getClass().getName());
+        eventBus.publishLog("TransaccionProcesarUseCase: Monto: ", monto);
+
         return repositorioCuenta.findById(idCuenta)
             .flatMap(cuenta -> {
                 BigDecimal costo = tipo.getCosto();
+                eventBus.publishLog("TransaccionProcesarUseCase: Costo: ", costo);
+
                 BigDecimal bdSaldoActual = cuenta.getSaldo_Global();
+                eventBus.publishLog("TransaccionProcesarUseCase: Saldo Actual: ", bdSaldoActual);
+
                 BigDecimal bdSaldoNuevo = cuenta.getSaldo_Global().add(monto.subtract(costo));
+                eventBus.publishLog("TransaccionProcesarUseCase: Saldo Nuevo: ", bdSaldoNuevo);
+
                 cuenta.setSaldo_Global(bdSaldoNuevo);
                 M_TransaccionMongo transaccion = new M_TransaccionMongo(
                     cuenta,
@@ -40,7 +51,11 @@ public class TransaccionProcesarUseCase implements ITransaccionProceso {
                     costo,
                     tipo.toString()
                 );
+                eventBus.publishLog("TransaccionProcesarUseCase: Cuenta: ", cuenta);
+                eventBus.publishLog("TransaccionProcesarUseCase: Transaccion: ", transaccion);
+
                 return repositorioCuenta.save(cuenta)
+                    .doOnSuccess(cuentaSave -> eventBus.publishLog("TransaccionProcesarUseCase Cuenta guardada: ", cuentaSave))
 //                    .flatMap(cuentaCreada ->
 //                        Mono.error(new ErrorGuardado(
 //                            "Error de prueba",
@@ -50,6 +65,7 @@ public class TransaccionProcesarUseCase implements ITransaccionProceso {
                         System.out.println("Transaccion guardada: " + transaccion.getId());
                         return repositorioTransaccion.save(transaccion);
                     })
+                    .doOnSuccess(cuentaFlatMap -> eventBus.publishLog("TransaccionProcesarUseCase flatMap Aplicado"))
                     .onErrorResume(error -> {
                         System.out.println("El error fue: " + error.getMessage());
 
@@ -64,7 +80,9 @@ public class TransaccionProcesarUseCase implements ITransaccionProceso {
                         System.out.println("Transaccion guardada: " + transactionModel.getId());
 
                         return modelMapper.map(transactionModel, M_Transaccion_DTO.class);
-                    });
+                    })
+                    .doOnSuccess(transaccionMap -> eventBus.publishLog("TransaccionProcesarUseCase: Fin de ejecución"))
+                    .doOnError(error -> eventBus.publishLog("TransaccionProcesarUseCase: Error: ", error));
             });
     }
 }

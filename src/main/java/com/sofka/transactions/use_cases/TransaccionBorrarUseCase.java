@@ -1,5 +1,6 @@
 package com.sofka.transactions.use_cases;
 
+import com.sofka.transactions.drivenAdapters.bus.RabbitMqPublisher;
 import com.sofka.transactions.drivenAdapters.repositorios.I_Repositorio_TransaccionMongo;
 import com.sofka.transactions.models.DTO.M_Transaccion_DTO;
 import com.sofka.transactions.models.Mongo.M_CuentaMongo;
@@ -18,10 +19,13 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class TransaccionBorrarUseCase implements Function<M_Transaccion_DTO, Mono<Void>> {
     private I_Repositorio_TransaccionMongo repositorioTransaccion;
+    private RabbitMqPublisher eventBus;
     private ModelMapper modelMapper;
 
     @Override
     public Mono<Void> apply(M_Transaccion_DTO transaccionDTO) {
+        eventBus.publishLog("TransaccionBorrarUseCase: Inicio de ejecución");
+
         String id = transaccionDTO.getId();
         M_TransaccionMongo transaccion;
         if (id == null || id.isEmpty())
@@ -39,8 +43,14 @@ public class TransaccionBorrarUseCase implements Function<M_Transaccion_DTO, Mon
             transaccion = new M_TransaccionMongo();
             transaccion.setId(transaccionDTO.getId());
         }
+
+        eventBus.publishLog("TransaccionBorrarUseCase Transaccion a reversar: ", transaccion);
+
         repositorioTransaccion.findOne(Example.of(transaccion))
+            .doOnSuccess(transaccionFind -> eventBus.publishLog("TransaccionBorrarUseCase Transaccion encontrada: ", transaccionFind))
             .map(transaccionEncontrada -> repositorioTransaccion.deleteById(transaccionEncontrada.getId()))
+            .doOnSuccess(transaccionMap -> eventBus.publishLog("TransaccionBorrarUseCase Transaccion eliminada: ", transaccionMap))
+            .doOnError(error -> eventBus.publishLog("TransaccionBorrarUseCase Error: ", error))
             .subscribe();
 
         return Mono.empty();
