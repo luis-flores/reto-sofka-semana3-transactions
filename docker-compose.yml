@@ -1,10 +1,8 @@
 version: '3.9'
 services:
   web:
+    image: ldflores/sofka-web
     container_name: sofka-web
-    build:
-      context: ./
-      dockerfile: Dockerfile
     working_dir: /app
     ports:
       - 8086:8086
@@ -46,6 +44,20 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - workshop-transactions
+
+
+  logs:
+    image: ldflores/sofka-logs
+    container_name: sofka-logs
+    environment:
+      rabbit.uri: "amqp://guest:guest@10.17.210.226:5672"
+      mongo.uri: "mongodb://10.17.210.226:27016/transactions_reactive"
+    depends_on:
+      - rabbitmq
+      - mongodb
+    restart: on-failure
     networks:
       - workshop-transactions
 

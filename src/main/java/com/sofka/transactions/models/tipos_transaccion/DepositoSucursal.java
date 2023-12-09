@@ -15,4 +15,16 @@ public class DepositoSucursal implements ITipoTransaccion {
     public BigDecimal getCosto() {
         return new BigDecimal(costo);
     }
+
+    @Override
+    public void setCosto(BigDecimal costo) {
+        this.costo = costo.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "DepositoSucursal{" +
+            "costo='" + costo + '\'' +
+            '}';
+    }
 }

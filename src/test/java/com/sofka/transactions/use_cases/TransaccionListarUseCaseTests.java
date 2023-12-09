@@ -1,32 +1,40 @@
 package com.sofka.transactions.use_cases;
 
+import com.sofka.transactions.drivenAdapters.bus.RabbitMqPublisher;
 import com.sofka.transactions.drivenAdapters.repositorios.I_Repositorio_TransaccionMongo;
 import com.sofka.transactions.models.DTO.M_Transaccion_DTO;
 import com.sofka.transactions.models.Mongo.M_TransaccionMongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.modelmapper.config.Configuration;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class TransaccionListarUseCaseTests {
 
     private TransaccionListarUseCase transaccionListarUseCase;
     @Mock
     private I_Repositorio_TransaccionMongo repositorioTransaccion;
-    @Autowired
+    @Mock
+    private RabbitMqPublisher eventBus;
     private ModelMapper modelMapper;
 
     @BeforeEach
     public void setup() {
-        transaccionListarUseCase = new TransaccionListarUseCase(repositorioTransaccion, modelMapper);
+        modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+            .setFieldMatchingEnabled(true)
+            .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+
+        transaccionListarUseCase = new TransaccionListarUseCase(repositorioTransaccion, eventBus, modelMapper);
     }
 
     @Test

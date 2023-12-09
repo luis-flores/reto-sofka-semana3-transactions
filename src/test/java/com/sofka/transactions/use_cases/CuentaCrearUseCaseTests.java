@@ -6,17 +6,18 @@ import com.sofka.transactions.models.DTO.M_Cuenta_DTO;
 import com.sofka.transactions.models.Mongo.M_CuentaMongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.modelmapper.config.Configuration;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class CuentaCrearUseCaseTests {
 
     private CuentaCrearUseCase cuentaCrearUseCase;
@@ -24,12 +25,16 @@ public class CuentaCrearUseCaseTests {
     private I_RepositorioCuentaMongo repositorioCuenta;
     @Mock
     private RabbitMqPublisher eventBus;
-    @Autowired
     private ModelMapper modelMapper;
 
     @BeforeEach
     public void setup() {
-        cuentaCrearUseCase = new CuentaCrearUseCase(repositorioCuenta, modelMapper, eventBus);
+        modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+            .setFieldMatchingEnabled(true)
+            .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+
+        cuentaCrearUseCase = new CuentaCrearUseCase(repositorioCuenta, eventBus, modelMapper);
     }
 
     @Test
